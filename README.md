@@ -9,26 +9,21 @@
 ![android_touch](android_touch.gif)
 
 ## android_touch
-android_touch is a tool to send multitouch events to android device. Generally it is used by various
-automation scripts to send touch events on real android device.
+android_touch 是一个向安卓设备发送多点触控事件的工具。通常，各种自动化脚本使用它在真实的 android 设备上发送触摸事件。
 
     android_touch is a dependency free native Android tool to send multitouch
     inputs at very high speed with very low latency.
 
-android_touch provides a http server for triggering multitouch events and
-gestures on Android devices. It works without root if started via ADB. Touch
-commands are sent to device as http request with JSON data.
+android_touch 提供了一个 http 服务器，用于在 Android 设备上触发多点触控事件和手势。如果通过 ADB 启动，它无需 root 即可工作。触摸命令作为带有 JSON 数据的 http 请求发送到设备。
 
-Multitouch data is sent as JOSN which can contain any type of touch events such
-as taps or complex gestures.
+多点触控数据以 JOSN 形式发送，其中可以包含任何类型的触控事件，例如点击或复杂手势。
 
-Android touch is built upon libevdev to communicate with touch input device.
+Android touch 是基于 libevdev 构建的，用于与触摸输入设备进行通信。
 
-## How do I use it?
+## 该如何使用它？
 
-#### Setting up device
-All prebuilt executable binaries for android_touch can be located in "libs"
-directory. You need to first determine what is your Android CPU Architecture, it can be one of the following :
+#### 设置设备
+android_touch 的所有预构建可执行二进制文件都可以位于“libs”目录中。您需要首先确定您的 Android CPU 架构是什么，它可以是以下之一：
 1. armeabi
 2. armeabi-v7a
 3. arm64-v8a
@@ -37,152 +32,144 @@ directory. You need to first determine what is your Android CPU Architecture, it
 6. mips
 7. mips64
 
-After you have determined CPU Architecture, you need to push "libs/{CPU_ARCH}/touch" to
-devices "/data/local/tmp" directory.
+确定 CPU 架构后，需要将“libs/{CPU_ARCH}/touch”推送到设备“/data/local/tmp”目录。
 
-For example if your CPU Architecture is "arm64-v8a" then run following command:
+例如，如果您的 CPU 架构是“arm64-v8a”，则运行以下命令：
 ```bash
 $ adb push libs/arm64-v8a/touch /data/local/tmp
 ```
 
-#### Staring android_touch http server on device
+#### 在设备上盯着 android_touch http 服务器
 
-To start android_touch http server on the android device run following command:
+要在 android 设备上启动 android_touch http 服务器，请运行以下命令：
 ```bash
 $ adb shell /data/loal/tmp/touch
 ``` 
-This will start android_touch http server on port 9889
+这将在端口 9889 上启动 android_touch http 服务器
 
-#### Forwarding android_touch http port to localhost
+#### 将 android_touch http 端口转发到 localhost
 
-As the http server is running on Android device itself, to send request from your host
-machine, you need to forward port 9889 of android to any port on host machine. For example
-if you want to send http request on host machines 9889 port:
+由于 http 服务器运行在 Android 设备本身上，要从您的主机发送请求，您需要将 android 的端口 9889 转发到主机上的任何端口。例如，如果您想在主机 9889 端口上发送 http 请求：
  
 ```bash
 $ adb forward tcp:9889 tcp:9889
 ``` 
 
-#### Sending request
+#### 发送请求
 
-Sending http request is straight forward, you can use any programming language and send
-http request to android_touch server. For example in python you can use urllib2 to send
-http request or on bash you can use curl tool to do the same.
+发送 http 请求很简单，您可以使用任何编程语言并将 http 请求发送到 android_touch 服务器。例如在 python 中你可以使用 urllib2 来发送 http 请求，或者在 bash 中你可以使用 curl 工具来做同样的事情。
 
-Below is the example of sending a click touch event on coordinate 100x100 using curl tool:
+下面是使用 curl 工具在坐标 100x100 上发送点击触摸事件的示例：
 
 ```bash
 $ curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
 ```
 
-#### Understanding Multitouch JSON data and format
+#### 了解多点触控 JSON 数据和格式
 
-android_touch allows you send a large set of touch commands to device in one shot. You can send
-individual touch commands by making separate http requests or can pack all touch commands and send
-in one shot. Sending all touch data in one shot will obviously reduce latency.
+android_touch 允许您一次性向设备发送大量触摸命令。您可以通过发出单独的 http 请求来发送单个触摸命令，也可以打包所有触摸命令并一次性发送。一次性发送所有触摸数据显然会减少延迟。
 
-android_touch http server only accepts json array of command objects. Following are the list of
-touch commands:
+android_touch http 服务器只接受命令对象的 json 数组。以下是触摸命令列表：
 
 <table>
   <tbody>
     <tr>
-      <th>Command</th>
-      <th>Description</th>
+      <th>命令</th>
+      <th>描述</th>
     </tr>
     <tr>
-      <td><h4>down</h4></td>
+      <td><h4>按下</h4></td>
       <td>
-        <p>This sends a touch down event to android device for next commit, following are the required parameters</p>
+        <p>这会向 android 设备发送一个触摸事件以进行下一次提交，以下是必需的参数</p>
         <table>
           <tr>
             <td><b>contact</b></td>
             <td>
-              This specifies the touch contact id, contact id can be 0 to N-1 where N is the maximum number of supported touch contacts on that device. On android devices N is generally 5 to 10, that is 5 finger or 10 finger touch surface.
+              这指定了触摸联系人 ID，联系人 ID 可以是 0 到 N-1，其中 N 是该设备上支持的最大触摸联系人数。在 android 设备上 N 一般为 5 到 10，即 5 个手指或 10 个手指触摸表面。
             </td>
           </tr>
           <tr>
             <td><b>x</b></td>
             <td>
-              X coordinate of the touch down event on the device screen space.
+              设备屏幕空间上触摸事件的 X 坐标。
             </td>
           </tr>
           <tr>
             <td><b>y</b></td>
             <td>
-              Y coordinate of the touch down event on the device screen space.
+             设备屏幕空间上触摸事件的 Y 坐标。
             </td>
           </tr>
           <tr>
             <td><b>pressure</b></td>
             <td>
-              Pressure of the touch down event, this can be any value if pressure sensitive event is not required.
+              按下事件的压力，如果不需要压力敏感事件，这可以是任何值。
             </td>
           </tr>
         </table>
       </td>
     </tr>
     <tr>
-      <td><h4>move</h4></td>
+      <td><h4>滑动</h4></td>
       <td>
-        This sends a touch move event to android device for next commit, following are the required parameters
+        这会将触摸移动事件发送到 android 设备以进行下一次提交，以下是必需的参数
         <table>
           <tr>
             <td><b>contact</b></td>
             <td>
-             This specifies the touch contact id, contact id can be 0 to N-1 where N is the maximum number of supported touch contacts on that device. On android devices N is generally 5 to 10, that is 5 finger or 10 finger touch surface.
+             这指定了触摸联系人 ID，联系人 ID 可以是 0 到 N-1，其中 N 是该设备上支持的最大触摸联系人数。在 android 设备上 N 一般为 5 到 10，即 5 个手指或 10 个手指触摸表面。
             </td>
           </tr>
           <tr>
             <td><b>x</b></td>
             <td>
-              X coordinate of the touch move event on the device screen space.
+              设备屏幕空间上触摸事件的 X 坐标。
             </td>
           </tr>
           <tr>
             <td><b>y</b></td>
             <td>
-              Y coordinate of the touch move event on the device screen space.
+              设备屏幕空间上触摸事件的 Y 坐标。
             </td>
           </tr>
           <tr>
             <td><b>pressure</b></td>
             <td>
-              Pressure of the touch move event, this can be any value if pressure sensitive event is not required.
+              触摸移动事件的压力，如果不需要压力敏感事件，这可以是任何值。
             </td>
           </tr>
         </table>
       </td>
     </tr>
     <tr>
-      <td><h4>up</h4></td>
+      <td><h4>抬起</h4></td>
       <td>
-        This sends a touch up event to android device for next commit, following are the required parameters
+        这会向 android 设备发送一个修饰事件以进行下一次提交，以下是必需的参数
         <table>
           <tr>
             <td><b>contact</b></td>
             <td>
-              This specifies the touch contact id, contact id can be 0 to N-1 where N is the maximum number of supported touch contacts on that device. On android devices N is generally 5 to 10, that is 5 finger or 10 finger touch surface.
+              这指定了触摸联系人 ID，联系人 ID 可以是 0 到 N-1，其中 N 是该设备上支持的最大触摸联系人数。在 android 设备上 N 一般为 5 到 10，即 5 个手指或 10 个手指触摸表面。
             </td>
           </tr>
         </table>
       </td>
     </tr>
     <tr>
-      <td><h4>commit</h4></td>
+      <td><h4>提交</h4></td>
       <td>
-        This sends a commit command to the android device, until a commit command is sent, all previous changes to a touch contact using command such as <b>down</b>, <b>up</b> and <b>move</b> will not be visible on the device. <b>Please also note that you can not have more than one down,move or up for the same contact in one commit.
+        这会向 android 设备发送提交命令，在发送提交命令之前，之前使用命令（例如down、up和move ）对触摸联系人所做的所有更改都不会在设备上可见。另请注意，在一次提交中，同一个联系人不能有多个向下、移动或向上。
       </td>
     </tr>
     <tr>
-      <td><h4>delay</h4></td>
+      <td><h4>延迟</h4></td>
       <td>
-        This allows pauses between touch events, following are the required parameters
+        这允许在触摸事件之间暂停，以下是必需的参数
         <table>
           <tr>
-            <td><b>value</b></td>
+            <td><b>值</b></td>
             <td>
-              Time in milliseconds to wait.
+              以毫秒为单位的等待时间。
             </td>
           </tr>
         </table>
@@ -191,7 +178,7 @@ touch commands:
   </tbody>
 </table>
 
-Following are some valid json objects of above commands:
+以下是上述命令的一些有效 json 对象：
 
 <table>
   <tr>
@@ -220,11 +207,11 @@ Following are some valid json objects of above commands:
   </tr>
 </table>
 
-#### Some Examples
+#### 例子
 
-##### Single tap
+##### 单击一次
 
-Tap on coordinate 100x100 with 50 pressure
+以 50 压力点击坐标 100x100
 
 ```json
 [
@@ -234,9 +221,9 @@ Tap on coordinate 100x100 with 50 pressure
   {"type": "commit"}
 ]
 ```
-##### Double tap
+##### 双击
 
-Double tap on coordinate 100x100 with 50 pressure with 100ms delay between taps and release at same time.
+双击坐标 100x100，压力为 50，轻击之间有 100 毫秒延迟，同时释放。
 
 ```json
 [
@@ -252,9 +239,9 @@ Double tap on coordinate 100x100 with 50 pressure with 100ms delay between taps 
 ]
 ```
 
-##### Two finger tap
+##### 两指轻敲
 
-Tap on two coordinates 100x100 and 200x200 simultaneously and release simultaneously after 100ms
+同时点击两个坐标100x100和200x200，100ms后同时释放
 
 ```json
 [
@@ -268,7 +255,7 @@ Tap on two coordinates 100x100 and 200x200 simultaneously and release simultaneo
 ]
 ```
 
-Tap on two coordinates 100x100 and 200x200 simultaneously and release finger 1 after 100ms and finger 2 after 200ms
+同时点击两个坐标100x100和200x200，100ms后松开手指1，200ms后松开手指2
 
 ```json
 [
@@ -284,9 +271,9 @@ Tap on two coordinates 100x100 and 200x200 simultaneously and release finger 1 a
 ]
 ```
 
-##### Swipe
+##### 滑动
 
-Swipe between 100x100 and 400x100
+在 100x100 和 400x100 之间滑动
 
 ```json
 [
@@ -299,7 +286,7 @@ Swipe between 100x100 and 400x100
 ]
 ```
 
-Swipe gesture including points 100x100, 110x110, 120x130, 120x150
+滑动手势包括点 100x100、110x110、120x130、120x150
 
 ```json
 [
@@ -316,28 +303,24 @@ Swipe gesture including points 100x100, 110x110, 120x130, 120x150
 ]
 ```
 
-##### Complex gesture
+##### 复杂的手势
 
-See [example python script](example/example.py) for complex gesture generation, which generates following gesture:
+请参阅用于复杂手势生成的示例 python 脚本，该脚本生成以下手势：
 
 ![example](example/example.gif)
 
-## How do I build locally?
-android_touch can be built for both linux and android platforms.
-Linux build can be done using cmake and make where Android build
-can be done using ndk-build.
+## 如何在本地构建？
+android_touch 可以为 linux 和 android 平台构建。Linux 构建可以使用 cmake 和 make 完成，而 Android 构建可以使用 ndk-build 完成。
 
-Linux executable can be used with linux multitouch input device drivers
-wheres Android executable can be used on android devices which contains
-multitouch input touchscreen.
+Linux 可执行文件可与 linux 多点触控输入设备驱动程序一起使用，其中 Android 可执行文件可用于包含多点触控输入触摸屏的 android 设备。
 
-### Building for Android
+###  Android 构建
 
 ```bash
 android_touch$ ndk-build
 ```
 
-### Building for Linux
+###  Linux 构建
 
 ```bash
 android_touch$ mkdir build
@@ -346,15 +329,15 @@ android_touch/build$ cmake ..
 android_touch/build$ make
 ```
 
-## How do I debug whats happening?
+## 如何调试事件？
 
-If you are running on Android, then all verbose logs are dispatched to logcat, you can see internal working by:
+如果您在 Android 上运行，则所有详细日志都将发送到 logcat，您可以通过以下方式查看内部工作：
 
 ```bash
 $ adb logcat | grep touch
 ```
 
-For example following is the debug output in logcat for below command:
+例如，以下是 logcat 中以下命令的调试输出：
 
 ```bash
 $ curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
@@ -374,7 +357,3 @@ android_touch: TouchInput : writeInputEvent : 3 : 47 : 0
 android_touch: TouchInput : writeInputEvent : 3 : 57 : -1
 android_touch: TouchInput : writeInputEvent : 0 : 0 : 0
 ```
-
-## Who is using it?
-
-Used internally by [Bobble Keyboard](https://bobbleapp.me/home) for their keyboard automation.
