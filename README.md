@@ -11,8 +11,8 @@
 ## android_touch
 android_touch 是一个向安卓设备发送多点触控事件的工具。通常，各种自动化脚本使用它在真实的 android 设备上发送触摸事件。
 
-    android_touch is a dependency free native Android tool to send multitouch
-    inputs at very high speed with very low latency.
+    android_touch是一个无依赖的本地android工具，用于发送多点触摸
+    以非常高的速度和非常低的延迟输入。
 
 android_touch 提供了一个 http 服务器，用于在 Android 设备上触发多点触控事件和手势。如果通过 ADB 启动，它无需 root 即可工作。触摸命令作为带有 JSON 数据的 http 请求发送到设备。
 
