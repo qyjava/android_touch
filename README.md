@@ -36,14 +36,14 @@ android_touch 的所有预构建可执行二进制文件都可以位于“libs�
 
 例如，如果您的 CPU 架构是“arm64-v8a”，则运行以下命令：
 ```bash
-$ adb push libs/arm64-v8a/touch /data/local/tmp
+adb push libs/arm64-v8a/touch /data/local/tmp
 ```
 
 #### 在设备上盯着 android_touch http 服务器
 
 要在 android 设备上启动 android_touch http 服务器，请运行以下命令：
 ```bash
-$ adb shell /data/loal/tmp/touch
+adb shell /data/loal/tmp/touch
 ``` 
 这将在端口 9889 上启动 android_touch http 服务器
 
@@ -52,7 +52,7 @@ $ adb shell /data/loal/tmp/touch
 由于 http 服务器运行在 Android 设备本身上，要从您的主机发送请求，您需要将 android 的端口 9889 转发到主机上的任何端口。例如，如果您想在主机 9889 端口上发送 http 请求：
  
 ```bash
-$ adb forward tcp:9889 tcp:9889
+adb forward tcp:9889 tcp:9889
 ``` 
 
 #### 发送请求
@@ -62,7 +62,7 @@ $ adb forward tcp:9889 tcp:9889
 下面是使用 curl 工具在坐标 100x100 上发送点击触摸事件的示例：
 
 ```bash
-$ curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
+curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
 ```
 
 #### 了解多点触控 JSON 数据和格式
@@ -334,13 +334,13 @@ android_touch/build$ make
 如果您在 Android 上运行，则所有详细日志都将发送到 logcat，您可以通过以下方式查看内部工作：
 
 ```bash
-$ adb logcat | grep touch
+adb logcat | grep touch
 ```
 
 例如，以下是 logcat 中以下命令的调试输出：
 
 ```bash
-$ curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
+curl -d '[{"type":"down", "contact":0, "x": 100, "y": 100, "pressure": 50}, {"type": "commit"}, {"type": "up", "contact": 0}, {"type": "commit"}]' http://localhost:9889
 ```
 
 ```text
