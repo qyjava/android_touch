@@ -22,6 +22,11 @@ Android touch 是基于 libevdev 构建的，用于与触摸输入设备进行�
 
 ## 该如何使用它？
 
+查看设备CPU架构命令：
+```bash
+adb shell getprop ro.product.cpu.abi
+```
+
 #### 设置设备
 android_touch 的所有预构建可执行二进制文件都可以位于“libs”目录中。您需要首先确定您的 Android CPU 架构是什么，它可以是以下之一：
 1. armeabi
@@ -43,7 +48,7 @@ adb push libs/arm64-v8a/touch /data/local/tmp
 
 要在 android 设备上启动 android_touch http 服务器，请运行以下命令：
 ```bash
-adb shell /data/loal/tmp/touch
+adb shell /data/local/tmp/touch
 ``` 
 这将在端口 9889 上启动 android_touch http 服务器
 
